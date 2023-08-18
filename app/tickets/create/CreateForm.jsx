@@ -8,5 +8,5 @@ export default function CreateForm() {
   const [priority, setPriority] = useState("low");
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
-  return <div>Create Form</div>;
+  return <form className="w-1/2">Create Form</form>;
 }
