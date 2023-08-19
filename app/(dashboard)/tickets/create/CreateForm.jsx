@@ -51,7 +51,7 @@ export default function CreateForm() {
         <select onChange={(e) => setPriority(e.target.value)}>
           <option value="low">Low Priority</option>
           <option value="high">High Priority</option>
-          <option value="Medium">Medium Priority</option>
+          <option value="medium">Medium Priority</option>
         </select>
       </label>
       <button className="btn-primary" disabled={isLoading}>

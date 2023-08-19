@@ -11,6 +11,13 @@ export async function generateStaticParams() {
     id: ticket.id,
   }));
 }
+export async function generateMetadata({ params }) {
+  const res = await fetch(`http://localhost:4000/tickets/${params.id}`);
+  const ticket = await res.json();
+  return {
+    title: `Maurice HelpDesk | ${ticket.title}`,
+  };
+}
 
 async function getTickets(id) {
   // imitating 3secs delay
@@ -23,6 +30,7 @@ async function getTickets(id) {
   if (!res.ok) {
     notFound();
   }
+
   return res.json();
 }
 
