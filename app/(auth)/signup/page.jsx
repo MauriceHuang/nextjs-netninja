@@ -19,7 +19,8 @@ export default function Signup() {
       },
     });
     if (error) {
-      setError(error);
+      setError(error.message);
+      return;
     }
     if (!error) {
       router.push("/verify");
@@ -32,7 +33,7 @@ export default function Signup() {
       <h2 className="text-center">Signup</h2>
 
       <AuthForm handleSubmit={handleSubmit} />
-      {error && <div className="error">{error.message}</div>}
+      {error && <div className="error">{error}</div>}
     </main>
   );
 }
