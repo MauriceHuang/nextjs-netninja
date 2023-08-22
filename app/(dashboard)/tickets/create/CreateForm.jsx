@@ -19,7 +19,6 @@ export default function CreateForm() {
       title,
       body,
       priority,
-      user_email: "mario@netninja.dev",
     };
 
     const res = await fetch("http://localhost:3000/api/tickets", {
@@ -31,7 +30,7 @@ export default function CreateForm() {
     const json = await res.json();
 
     if (json.error) {
-      console.log(json.error);
+      console.log(error.message);
     }
     if (json.data) {
       router.refresh();

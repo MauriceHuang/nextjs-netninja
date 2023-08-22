@@ -1,14 +1,16 @@
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 import Link from "next/link";
 
 async function getTickets() {
-  // imitating 3secs delay
-  const res = await fetch("http://localhost:4000/tickets", {
-    next: {
-      revalidate: 0,
-    },
-  });
-  //   console.log(res.json());
-  return res.json();
+  const supabase = createServerComponentClient({ cookies });
+
+  const { data, error } = await supabase.from("tickets").select();
+  console.log("data from app/Tickets/ticketList", data);
+  if (error) {
+    console.log(error.message);
+  }
+  return data;
 }
 export default async function TicketList() {
   const tickets = await getTickets();
@@ -26,7 +28,7 @@ export default async function TicketList() {
         </div>
       ))}
       {tickets.length === 0 && (
-        <p className="text-center">There are no open tickets. Yay!</p>
+        <p classNam="text-center">There are no open tickets. Yay!</p>
       )}
     </>
   );

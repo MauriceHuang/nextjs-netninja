@@ -1,45 +1,51 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import DeleteButton from "./DeleteButton";
 
 export const dynamicParams = true;
 
-export async function generateStaticParams() {
-  const res = await fetch("http://localhost:4000/tickets");
-  const tickets = await res.json();
-  return tickets.map((ticket) => ({
-    id: ticket.id,
-  }));
-}
 export async function generateMetadata({ params }) {
-  const res = await fetch(`http://localhost:4000/tickets/${params.id}`);
-  const ticket = await res.json();
+  const supabase = createServerComponentClient({ cookies });
+  const { data: ticket } = await supabase
+    .from("tickets")
+    .select()
+    .eq("id", params.id)
+    .single();
   return {
-    title: `Maurice HelpDesk | ${ticket.title}`,
+    title: `Maurice Help| ${ticket?.title || "Not Found"}`,
   };
 }
 
 async function getTickets(id) {
-  // imitating 3secs delay
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-  const res = await fetch(`http://localhost:4000/tickets/${id}`, {
-    next: {
-      revalidate: 60,
-    },
-  });
-  if (!res.ok) {
+  const supabase = createServerComponentClient({ cookies });
+  const { data } = await supabase
+    .from("tickets")
+    .select()
+    .eq("id", id)
+    .single();
+  if (!data) {
     notFound();
   }
 
-  return res.json();
+  return data;
 }
 
 export default async function ticketDetails({ params }) {
   const ticket = await getTickets(params.id);
+  const supabase = createServerComponentClient({ cookies });
+  const { data } = await supabase.auth.getSession();
   return (
     <main>
       <nav>
         <h2>Ticket Details</h2>
+        <div className="ml-auto">
+          {data.session.user.email === ticket.user_email && (
+            <DeleteButton id={params.id} />
+          )}
+        </div>
       </nav>
       <Suspense fallback={<Loading />}>
         <div className="card">
